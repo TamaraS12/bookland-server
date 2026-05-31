@@ -6,9 +6,8 @@ import com.project.booklandserver.model.Author;
 import com.project.booklandserver.repository.AuthorRepository;
 import com.project.booklandserver.service.AuthorService;
 import org.springframework.stereotype.Service;
-
-
 import java.util.List;
+
 @Service
 public class AuthorServiceImpl implements AuthorService {
     private final AuthorRepository authorRepository;

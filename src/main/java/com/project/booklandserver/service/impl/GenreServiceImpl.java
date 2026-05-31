@@ -6,7 +6,6 @@ import com.project.booklandserver.model.Genre;
 import com.project.booklandserver.repository.GenreRepository;
 import com.project.booklandserver.service.GenreService;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
