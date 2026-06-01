@@ -9,4 +9,8 @@ import java.util.List;
 
 public interface BookService {
     List<BookDto> search(BookSearchRequest request, Pageable pageable);
+    BookDto getById(Long id);
+    BookDto add(BookDto bookDto);
+    BookDto update(Long id, BookDto bookDto);
+    void delete(Long id);
 }

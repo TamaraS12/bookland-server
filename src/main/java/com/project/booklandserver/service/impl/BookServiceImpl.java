@@ -3,22 +3,36 @@ package com.project.booklandserver.service.impl;
 import com.project.booklandserver.dto.BookDto;
 import com.project.booklandserver.dto.BookSearchRequest;
 import com.project.booklandserver.mapper.BookMapper;
+import com.project.booklandserver.model.Author;
+import com.project.booklandserver.model.Book;
+import com.project.booklandserver.model.Genre;
+import com.project.booklandserver.repository.AuthorRepository;
 import com.project.booklandserver.repository.BookRepository;
+import com.project.booklandserver.repository.GenreRepository;
+import com.project.booklandserver.service.AuthorService;
 import com.project.booklandserver.service.BookService;
 import com.project.booklandserver.specification.BookSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final AuthorRepository authorRepository;
+    private final GenreRepository genreRepository;
 
-    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper) {
+    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper, AuthorRepository authorRepository, AuthorService authorService, GenreRepository genreRepository) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
+        this.authorRepository = authorRepository;
+        this.genreRepository = genreRepository;
     }
 
     @Override
@@ -28,4 +42,65 @@ public class BookServiceImpl implements BookService {
 
         return page.getContent();
     }
-}
+
+    @Override
+    public BookDto getById(Long id) {
+        Optional<Book> book = bookRepository.findById(id);
+
+        if (book.isPresent()) {
+            return bookMapper.toDto(book.get());
+        }
+        throw new RuntimeException("Book not found");
+    }
+
+    @Override
+    public BookDto add(BookDto bookDto) {
+        Book book = bookMapper.toEntity(bookDto);
+        Author author = authorRepository.findById(bookDto.authorId())
+                .orElseThrow(() -> new RuntimeException("Author not found"));
+        List<Genre> genres = genreRepository.findAllById(bookDto.genreIds());
+
+        book.setAuthor(author);
+        book.setGenres(genres);
+
+        Book savedBook = bookRepository.save(book);
+
+        return bookMapper.toDto(savedBook);
+    }
+
+    @Override
+    public BookDto update(Long id, BookDto bookDto) {
+
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+
+        Author author = authorRepository.findById(bookDto.authorId())
+                .orElseThrow(() -> new RuntimeException("Author not found"));
+
+        List<Genre> genres = genreRepository.findAllById(bookDto.genreIds());
+
+        book.setTitle(bookDto.title());
+        book.setImageUrl(bookDto.imageUrl());
+        book.setPrice(bookDto.price());
+        book.setDescription(bookDto.description());
+
+        book.setAuthor(author);
+        book.setGenres(genres);
+
+        Book updatedBook = bookRepository.save(book);
+
+        return bookMapper.toDto(updatedBook);
+    }
+
+    @Override
+    public void delete(Long id) {
+            Book book = bookRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Book not found"));
+
+            bookRepository.delete(book);
+        }
+    }
+
+
+
+

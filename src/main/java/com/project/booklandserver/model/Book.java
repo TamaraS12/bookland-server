@@ -36,11 +36,21 @@ public class Book {
 
     private String imageUrl;
 
-    public Book(String title, String imageUrl) {
+    public Book(String title, String imageUrl, String description, BigDecimal price) {
         this.title = title;
         this.imageUrl = imageUrl;
+        this.description = description;
+        this.price = price;
 
     }
 
     public Book() {}
+
+//    public void setGenres(List<Genre> genres) {
+//        this.genres.clear();
+//
+//        if (genres != null) {
+//            this.genres.addAll(genres);
+//        }
+//    }
 }
