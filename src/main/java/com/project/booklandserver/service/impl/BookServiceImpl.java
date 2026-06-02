@@ -15,6 +15,7 @@ import com.project.booklandserver.specification.BookSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +55,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public BookDto add(BookDto bookDto) {
         Book book = bookMapper.toEntity(bookDto);
         Author author = authorRepository.findById(bookDto.authorId())
@@ -69,6 +71,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public BookDto update(Long id, BookDto bookDto) {
 
         Book book = bookRepository.findById(id)
