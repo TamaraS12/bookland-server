@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class BookMapper implements GenericMapper<BookDto, Book> {
     @Override
     public Book toEntity(BookDto dto) {
-        return new Book(dto.title(), dto.imageUrl(), dto.description(), dto.price());
+        return new Book(dto.title(), dto.description(), dto.price());
     }
 
     @Override
@@ -30,7 +30,7 @@ public class BookMapper implements GenericMapper<BookDto, Book> {
 
         return new BookDto(entity.getId(),
                 entity.getTitle(),
-                entity.getImageUrl(),
+                entity.getImageName(),
                 entity.getPrice(),
                 entity.getDescription(),
                 entity.getAuthor().getId(),

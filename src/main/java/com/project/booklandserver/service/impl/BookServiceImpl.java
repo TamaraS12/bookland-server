@@ -9,18 +9,17 @@ import com.project.booklandserver.model.Genre;
 import com.project.booklandserver.repository.AuthorRepository;
 import com.project.booklandserver.repository.BookRepository;
 import com.project.booklandserver.repository.GenreRepository;
-import com.project.booklandserver.service.AuthorService;
 import com.project.booklandserver.service.BookService;
+import com.project.booklandserver.service.FileStorageService;
 import com.project.booklandserver.specification.BookSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -28,12 +27,18 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
     private final AuthorRepository authorRepository;
     private final GenreRepository genreRepository;
+    private final FileStorageService fileStorageService;
 
-    public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper, AuthorRepository authorRepository, AuthorService authorService, GenreRepository genreRepository) {
+    public BookServiceImpl(BookRepository bookRepository,
+                           BookMapper bookMapper,
+                           AuthorRepository authorRepository,
+                           GenreRepository genreRepository,
+                           FileStorageService fileStorageService) {
         this.bookRepository = bookRepository;
         this.bookMapper = bookMapper;
         this.authorRepository = authorRepository;
         this.genreRepository = genreRepository;
+        this.fileStorageService = fileStorageService;
     }
 
     @Override
@@ -56,7 +61,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookDto add(BookDto bookDto) {
+    public BookDto add(BookDto bookDto, MultipartFile image) {
         Book book = bookMapper.toEntity(bookDto);
         Author author = authorRepository.findById(bookDto.authorId())
                 .orElseThrow(() -> new RuntimeException("Author not found"));
@@ -65,6 +70,14 @@ public class BookServiceImpl implements BookService {
         book.setAuthor(author);
         book.setGenres(genres);
 
+        if (image != null && !image.isEmpty()) {
+
+            String fileName =
+                    fileStorageService.save(image);
+
+            book.setImageName(fileName);
+        }
+
         Book savedBook = bookRepository.save(book);
 
         return bookMapper.toDto(savedBook);
@@ -72,7 +85,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookDto update(Long id, BookDto bookDto) {
+    public BookDto update(Long id, BookDto bookDto, MultipartFile image) {
 
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Book not found"));
@@ -83,12 +96,22 @@ public class BookServiceImpl implements BookService {
         List<Genre> genres = genreRepository.findAllById(bookDto.genreIds());
 
         book.setTitle(bookDto.title());
-        book.setImageUrl(bookDto.imageUrl());
         book.setPrice(bookDto.price());
         book.setDescription(bookDto.description());
 
         book.setAuthor(author);
         book.setGenres(genres);
+
+        if (image != null && !image.isEmpty()) {
+
+            fileStorageService.delete(book.getImageName());
+
+            String fileName =
+                    fileStorageService.save(image);
+
+            book.setImageName(fileName);
+        }
+
 
         Book updatedBook = bookRepository.save(book);
 
@@ -97,12 +120,13 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void delete(Long id) {
-            Book book = bookRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Book not found"));
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
 
-            bookRepository.delete(book);
-        }
+        fileStorageService.delete(book.getImageName());
+        bookRepository.delete(book);
     }
+}
 
 
 

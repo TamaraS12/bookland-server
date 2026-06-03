@@ -34,11 +34,10 @@ public class Book {
     )
     private List<Genre> genres = new ArrayList<>();
 
-    private String imageUrl;
+    private String imageName;
 
-    public Book(String title, String imageUrl, String description, BigDecimal price) {
+    public Book(String title, String description, BigDecimal price) {
         this.title = title;
-        this.imageUrl = imageUrl;
         this.description = description;
         this.price = price;
 

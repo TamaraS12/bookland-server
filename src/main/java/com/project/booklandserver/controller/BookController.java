@@ -6,6 +6,7 @@ import com.project.booklandserver.service.BookService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,14 +31,16 @@ public class BookController {
     }
 
     @PostMapping
-    public BookDto add(@RequestBody BookDto bookDto) {
-        return bookService.add(bookDto);
+    public BookDto add(@RequestPart("book") BookDto bookDto,
+                       @RequestPart("image") MultipartFile image) {
+        return bookService.add(bookDto, image);
     }
 
     @PutMapping("/{id}")
     public BookDto update(@PathVariable Long id,
-                          @RequestBody BookDto bookDto) {
-        return bookService.update(id, bookDto);
+                          @RequestPart("book") BookDto bookDto,
+                          @RequestPart(name = "image", required = false) MultipartFile image) {
+        return bookService.update(id, bookDto, image);
     }
 
     @DeleteMapping("/{id}")

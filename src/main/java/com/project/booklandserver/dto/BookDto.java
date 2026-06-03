@@ -5,7 +5,7 @@ import java.util.Set;
 
 public record BookDto(Long id,
                       String title,
-                      String imageUrl,
+                      String imageName,
                       BigDecimal price,
                       String description,
                       Long authorId,
