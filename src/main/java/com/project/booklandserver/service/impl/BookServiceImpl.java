@@ -2,6 +2,7 @@ package com.project.booklandserver.service.impl;
 
 import com.project.booklandserver.dto.BookDto;
 import com.project.booklandserver.dto.BookSearchRequest;
+import com.project.booklandserver.dto.BookSearchResponse;
 import com.project.booklandserver.mapper.BookMapper;
 import com.project.booklandserver.model.Author;
 import com.project.booklandserver.model.Book;
@@ -42,11 +43,16 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> search(BookSearchRequest request, Pageable pageable) {
+    public BookSearchResponse search(BookSearchRequest request, Pageable pageable) {
         Page<BookDto> page = bookRepository.findAll(BookSpecification.search(request), pageable)
                 .map(book -> bookMapper.toDto(book));
 
-        return page.getContent();
+        return new BookSearchResponse(
+                page.getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements()
+        );
     }
 
     @Override
