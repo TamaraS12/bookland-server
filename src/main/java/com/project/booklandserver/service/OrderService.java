@@ -8,4 +8,6 @@ public interface OrderService {
     OrderDto add(OrderDto orderDto, String username);
 
     List<OrderDto> getAllByUser(String username);
+
+    List<OrderDto> getAll();
 }

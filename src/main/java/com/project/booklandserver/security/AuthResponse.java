@@ -2,5 +2,5 @@ package com.project.booklandserver.security;
 
 import com.project.booklandserver.model.UserRole;
 
-public record AuthResponse(String token, UserRole role) {
+public record AuthResponse(String token, UserRole role, String username) {
 }

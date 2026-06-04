@@ -68,4 +68,12 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orders = orderRepository.getAllByUserId(user.getId());
         return orders.stream().map(order -> orderMapper.toDto(order)).toList();
     }
+
+    @Override
+    public List<OrderDto> getAll() {
+        return orderRepository.findAll()
+                .stream()
+                .map(order -> orderMapper.toDto(order))
+                .toList();
+    }
 }

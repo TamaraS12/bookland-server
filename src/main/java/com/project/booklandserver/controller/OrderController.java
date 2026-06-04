@@ -24,8 +24,13 @@ public class OrderController {
     }
 
     @GetMapping
-    public List<OrderDto> getAll(Authentication authentication){
+    public List<OrderDto> getAllByUser(Authentication authentication){
         String username = authentication.getName();
         return orderService.getAllByUser(username);
+    }
+
+    @GetMapping("/admin")
+    public List<OrderDto> getAll(){
+        return orderService.getAll();
     }
 }
