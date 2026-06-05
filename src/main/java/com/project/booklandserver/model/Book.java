@@ -44,12 +44,4 @@ public class Book {
     }
 
     public Book() {}
-
-//    public void setGenres(List<Genre> genres) {
-//        this.genres.clear();
-//
-//        if (genres != null) {
-//            this.genres.addAll(genres);
-//        }
-//    }
 }
